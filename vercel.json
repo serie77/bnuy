@@ -15,5 +15,5 @@
       "dest": "/index.html"
     }
   ],
-  "installCommand": "rm -rf node_modules && npm ci"
+  "buildCommand": "chmod +x ./node_modules/.bin/vite && npm run build"
 } 
