@@ -1,0 +1,42 @@
+.footer {
+  background: #111;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 3rem 0 2rem;
+  margin-top: 4rem;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 2rem;
+  text-align: center;
+}
+
+.description {
+  font-size: 1.2rem;
+  color: #ccc;
+  margin-bottom: 2rem;
+  line-height: 1.6;
+  font-weight: 300;
+}
+
+.highlight {
+  color: #ff69b4;
+  font-weight: 400;
+}
+
+.copyright {
+  font-size: 0.9rem;
+  color: #666;
+  letter-spacing: 1px;
+}
+
+@media (max-width: 768px) {
+  .container {
+    padding: 0 1rem;
+  }
+  
+  .description {
+    font-size: 1rem;
+  }
+}
