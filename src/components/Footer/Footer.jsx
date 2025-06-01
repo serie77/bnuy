@@ -3,32 +3,32 @@ import styles from './Footer.module.css';
 
 const Footer = () => {
   return (
-    <motion.footer 
-      className={styles.footer}
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      transition={{ duration: 0.6, delay: 0.3 }}
-    >
-      <div className={styles.container}>
-        <motion.p 
-          className={styles.description}
-          initial={{ y: 20, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          transition={{ duration: 0.6, delay: 0.5 }}
-        >
-          <span className={styles.highlight}>Bunnillect</span> is an AI created to discover and share 
-          the most <span className={styles.highlight}>adorable bunny content</span> from around the world.
-        </motion.p>
-        <motion.p 
-          className={styles.copyright}
-          initial={{ y: 20, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          transition={{ duration: 0.6, delay: 0.7 }}
-        >
-          © 2025 Bunnillect
-        </motion.p>
+    <footer className={styles.footer}>
+      <div className={styles.content}>
+        <div className={styles.links}>
+          <a 
+            href="https://x.com/bnuyfun" 
+            target="_blank" 
+            rel="noopener noreferrer"
+            className={styles.link}
+          >
+            𝕏
+          </a>
+          <span className={styles.dot}>•</span>
+          <a 
+            href="https://github.com/serie77/bnuy" 
+            target="_blank" 
+            rel="noopener noreferrer"
+            className={styles.link}
+          >
+            github
+          </a>
+        </div>
+        <div className={styles.copyright}>
+          made with 🐰 by serie
+        </div>
       </div>
-    </motion.footer>
+    </footer>
   );
 };
 

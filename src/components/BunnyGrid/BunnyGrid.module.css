@@ -54,10 +54,12 @@
 
 .grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 2px;
+  grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+  gap: 1.5rem;
+  padding: 1.5rem;
+  max-width: 1800px;
+  margin: 0 auto;
   background: var(--border-color);
-  padding: 2px;
   animation: fadeIn 1s ease 0.6s both;
 }
 
@@ -114,7 +116,11 @@
   aspect-ratio: 1;
   position: relative;
   overflow: hidden;
-  background: var(--bg-color);
+  border-radius: 4px;
+  background: var(--card-bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
   animation: fadeIn 0.5s ease forwards;
   opacity: 0;
 }
@@ -123,12 +129,17 @@
   width: 100%;
   height: 100%;
   position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .image {
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: contain;
+  object-position: center;
+  background: var(--card-bg);
   transition: transform 0.4s cubic-bezier(0.2, 0, 0.2, 1);
   filter: none;
 }
@@ -195,7 +206,7 @@
   }
 
   .grid {
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
   }
 }
 
@@ -203,4 +214,89 @@
   .grid {
     grid-template-columns: 1fr;
   }
+}
+
+.skeletonCard {
+  aspect-ratio: 1;
+  background: var(--card-bg);
+  border-radius: 4px;
+  overflow: hidden;
+  position: relative;
+  min-height: 300px;
+  width: 100%;
+}
+
+.skeletonImage {
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    var(--card-bg) 0%,
+    var(--card-hover) 50%,
+    var(--card-bg) 100%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.skeletonOverlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(
+    45deg,
+    rgba(255, 182, 193, 0.2),  /* Light pink */
+    rgba(173, 216, 230, 0.2),  /* Light blue */
+    rgba(144, 238, 144, 0.2)   /* Light green */
+  );
+  background-size: 200% 200%;
+  animation: gradientBG 3s ease infinite;
+}
+
+@keyframes shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+@keyframes gradientBG {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.actions {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1.5rem;
+  justify-content: center;
+}
+
+.button {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  color: var(--text-color);
+  text-decoration: none;
+  font-size: 0.9rem;
+  transition: all 0.2s ease;
+  background: transparent;
+  font-family: var(--font-mono);
+  letter-spacing: 0.5px;
+}
+
+.button:hover {
+  border-color: var(--text-color);
+  transform: translateY(-1px);
+}
+
+.icon {
+  font-size: 1.1rem;
 }

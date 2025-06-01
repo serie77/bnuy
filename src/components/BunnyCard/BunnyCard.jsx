@@ -26,45 +26,40 @@ const BunnyCard = ({ bunny, index }) => {
 
   return (
     <div className={styles.card} onClick={handleClick}>
-      <div className={styles.imageContainer}>
-        {!imageLoaded && !imageError && (
-          <div className={styles.loading}>
-            <div className={styles.loadingSpinner} />
-          </div>
-        )}
-        
-        {imageError ? (
-          <div className={styles.error}>
-            <span>🐰</span>
-          </div>
-        ) : (
-          <img
-            src={getCleanImageUrl(bunny.url)}
-            alt={bunny.title}
-            className={`${styles.image} ${imageLoaded ? styles.loaded : ''}`}
-            onLoad={() => setImageLoaded(true)}
-            onError={() => {
-              console.log('Failed to load:', getCleanImageUrl(bunny.url));
-              // Try alternative formats or fall back
-              if (!bunny.url.includes('i.imgur.com')) {
-                const imageId = bunny.url.split('/').pop().split('.')[0];
-                const altUrl = `https://i.imgur.com/${imageId}.png`;
-                console.log('Trying alternative:', altUrl);
-                // You could implement a retry mechanism here
-              }
-              setImageError(true);
-            }}
-            loading="lazy"
-          />
-        )}
-        
-        <div className={styles.overlay}>
-          <div className={styles.title}>{bunny.title}</div>
-          <div className={styles.details}>
-            Posted by u/{bunny.author} in r/{bunny.subreddit}
-          </div>
+      {/* Show skeleton until the specific image is loaded */}
+      {!imageLoaded && !imageError && (
+        <div className={styles.skeletonCard}>
+          <div className={styles.skeletonImage} />
+          <div className={styles.skeletonOverlay} />
         </div>
-      </div>
+      )}
+      
+      <img
+        src={getCleanImageUrl(bunny.url)}
+        alt={bunny.title}
+        className={`${styles.image} ${imageLoaded ? styles.loaded : styles.hidden}`}
+        onLoad={() => setImageLoaded(true)}
+        onError={() => setImageError(true)}
+        loading="lazy"
+        decoding="async"
+      />
+      
+      {/* Show overlay only when image is loaded */}
+      {imageLoaded && (
+        <div className={styles.overlay}>
+          <a 
+            href={bunny.source} 
+            target="_blank" 
+            rel="noopener noreferrer"
+            className={styles.overlayContent}
+          >
+            <span className={styles.imageNumber}>#{index + 1}</span>
+            <span className={styles.source}>
+              r/{bunny.subreddit} • u/{bunny.author}
+            </span>
+          </a>
+        </div>
+      )}
     </div>
   );
 };

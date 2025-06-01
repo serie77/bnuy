@@ -152,81 +152,78 @@ export async function fetchBunnyPosts(limit = 50) {
 
   try {
     const token = await getAccessToken();
-    const allPosts = [];
-
-    // Fetch more posts from each subreddit for better variety
-    const postsPerSubreddit = Math.ceil(500 / subreddits.length); // Much more posts per subreddit
-
-    for (const subreddit of subreddits) {
-      try {
-        const response = await fetch(
-          `https://oauth.reddit.com/r/${subreddit}/hot?limit=${postsPerSubreddit}`, {
-          headers: {
-            'Authorization': `Bearer ${token}`,
-            'User-Agent': 'web:bnuy:v1.0.0',
-          }
-        });
-
-        if (!response.ok) {
-          const error = await response.text();
-          console.error(`Error fetching r/${subreddit}:`, response.status, error);
-          continue;
+    
+    // Fetch even more posts initially
+    const postsPerSubreddit = Math.ceil(limit * 3); // Triple the limit for more safety
+    const promises = subreddits.map(subreddit =>
+      fetch(`https://oauth.reddit.com/r/${subreddit}/hot?limit=${postsPerSubreddit}`, {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'User-Agent': 'web:bnuy:v1.0.0',
         }
-
-        const data = await response.json();
-        // Add subreddit info to track distribution
-        const subredditPosts = data.data.children.map(post => ({
-          ...post,
-          subreddit_source: subreddit
-        }));
-        allPosts.push(...subredditPosts);
-      } catch (error) {
+      })
+      .then(response => {
+        if (!response.ok) {
+          console.error(`Error fetching r/${subreddit}:`, response.status);
+          return null;
+        }
+        return response.json();
+      })
+      .catch(error => {
         console.error(`Failed to fetch r/${subreddit}:`, error);
-      }
-    }
+        return null;
+      })
+    );
 
-    // Filter for static images and TRUE GIFs only - NO videos
-    const validPosts = allPosts
+    const results = await Promise.all(promises);
+    
+    // Add logging for debugging
+    console.log('Raw posts per subreddit:', results.map(r => r?.data?.children?.length));
+    
+    const allPosts = results
+      .filter(Boolean)
+      .flatMap(result => result.data.children)
       .filter(post => {
         if (!post.data) return false;
         const postData = post.data;
         const url = postData.url.toLowerCase();
         
-        // Log what we're filtering for BunnyGifs specifically
-        if (postData.subreddit === 'BunnyGifs') {
-          console.log(`BunnyGifs post: ${url}, is_video: ${postData.is_video}`);
-        }
+        // Only allow images from trusted sources
+        const isTrustedSource = (
+          url.includes('i.redd.it') ||
+          url.includes('i.imgur.com') ||
+          (url.includes('imgur.com') && !url.includes('/gallery/') && !url.includes('/a/'))
+        );
         
-        // Exclude ALL video formats (.gifv are videos, not gifs)
-        if (url.includes('.gifv') || url.includes('v.redd.it') || postData.is_video || url.includes('.mp4')) {
-          if (postData.subreddit === 'BunnyGifs') {
-            console.log(`Filtered out BunnyGifs post: ${url} (video format)`);
-          }
-          return false;
-        }
-        
-        // Be more selective about imgur URLs
-        const isValidImgur = url.includes('i.imgur.com') || 
-                            (url.includes('imgur.com') && !url.includes('/gallery/') && !url.includes('/a/'));
-        
-        // Only allow TRUE image formats and .gif (not .gifv)
-        const isValidMedia = (
+        const isValidExtension = (
           url.endsWith('.jpg') ||
           url.endsWith('.jpeg') ||
           url.endsWith('.png') ||
-          url.endsWith('.gif') ||  // True GIF files only
-          isValidImgur ||
-          url.includes('i.redd.it')
+          url.endsWith('.gif')
         );
 
         const isValid = (
           !postData.is_self &&
           !postData.over_18 &&
-          isValidMedia
+          isTrustedSource &&
+          isValidExtension &&
+          !url.includes('.gifv') && 
+          !url.includes('v.redd.it') && 
+          !postData.is_video && 
+          !url.includes('.mp4')
         );
 
-        if (postData.subreddit === 'BunnyGifs' && isValid) {
-          console.log(`Keeping BunnyGifs post: ${url}`);
+        if (!isValid) {
+          console.log('Filtered out post:', {
+            url,
+            reason: {
+              isSelf: postData.is_self,
+              isNSFW: postData.over_18,
+              isTrustedSource: isTrustedSource,
+              isValidExtension: isValidExtension,
+              isVideo: postData.is_video || url.includes('v.redd.it') || url.includes('.mp4')
+            }
+          });
         }
 
         return isValid;
@@ -242,20 +239,14 @@ export async function fetchBunnyPosts(limit = 50) {
         created: post.data.created_utc
       }));
 
-    // NEW: Take all available posts instead of trying to distribute evenly
-    const shuffledPosts = validPosts.sort(() => Math.random() - 0.5);
+    console.log(`Found ${allPosts.length} valid posts before shuffle`);
+
+    // Shuffle and ensure exact count
+    const shuffledPosts = allPosts.sort(() => Math.random() - 0.5);
     const finalPosts = shuffledPosts.slice(0, limit);
     
-    console.log(`Total valid posts found: ${validPosts.length}`);
-    console.log(`Taking ${finalPosts.length} posts out of ${validPosts.length} available`);
-    console.log(`Final distribution:`, 
-      subreddits.map(sub => ({
-        subreddit: sub,
-        available: validPosts.filter(post => post.subreddit === sub).length,
-        taken: finalPosts.filter(post => post.subreddit === sub).length
-      }))
-    );
-
+    console.log(`Returning ${finalPosts.length} posts`);
+    
     return finalPosts;
   } catch (error) {
     console.error('Error fetching bunny posts:', error);

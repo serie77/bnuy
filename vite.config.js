@@ -9,9 +9,14 @@ export default defineConfig({
     assetsDir: 'assets',
     rollupOptions: {
       output: {
-        manualChunks: undefined,
-      },
+        manualChunks: {
+          'vendor': ['react', 'react-dom', 'react-router-dom'],
+          'reddit': ['axios']
+        }
+      }
     },
+    reportCompressedSize: false,
+    chunkSizeWarningLimit: 1000
   },
   server: {
     proxy: {
