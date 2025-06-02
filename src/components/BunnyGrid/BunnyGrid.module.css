@@ -5,6 +5,8 @@
   transition: background-color 0.3s ease;
 }
 
+/* Updated grid layout - [today's date] */
+
 .intro {
   height: 45vh;
   min-height: 300px;
