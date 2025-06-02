@@ -14,15 +14,6 @@ const Footer = () => {
           >
             𝕏
           </a>
-          <span className={styles.dot}>•</span>
-          <a 
-            href="https://github.com/serie77/bnuy" 
-            target="_blank" 
-            rel="noopener noreferrer"
-            className={styles.link}
-          >
-            github
-          </a>
         </div>
         <div className={styles.copyright}>
           made with 🐰 by serie
