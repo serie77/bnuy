@@ -16,7 +16,7 @@ const Footer = () => {
           </a>
         </div>
         <div className={styles.copyright}>
-          made with 🐰 by serie
+          made with 🐰 by the bnuy community
         </div>
       </div>
     </footer>

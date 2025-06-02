@@ -39,8 +39,18 @@ function BunnyGrid() {
             watch bunny tv
           </Link>
           <Link to="/archive" className={styles.button}>
+            <span className={styles.icon}>📁</span>
             view archive
           </Link>
+          <a
+            href="https://x.com/i/communities/1929591078941843707"
+            target="_blank"
+            rel="noopener noreferrer"
+            className={styles.button}
+          >
+            <span className={styles.icon}>𝕏</span>
+            join the X community
+          </a>
         </div>
       </div>
       
