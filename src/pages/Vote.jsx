@@ -29,7 +29,7 @@ function Vote() {
   const TOKEN_MINT = "7BFKwYhnNfMhCFjPGjd7tb1iX9NGkgoRDT1D8viDpump";
   const REQUIRED_TOKENS = 350000; // 20k tokens
 
-  const API_URL = '/api'; // This will make requests to /api/submissions/[wallet]
+  const API_URL = '/api'; // This will be added to the path
 
   // Page initialization
   useEffect(() => {
@@ -181,7 +181,7 @@ function Vote() {
     if (!publicKey) return;
     
     try {
-      const response = await fetch(`${API_URL}/api/submissions/${publicKey.toString()}`);
+      const response = await fetch(`${API_URL}/submissions/${publicKey.toString()}`);
       const data = await response.json();
       setSubmissionCount(data.count);
       
@@ -208,7 +208,7 @@ function Vote() {
 
   const saveSubmission = async (submissionData) => {
     try {
-      const response = await fetch(`${API_URL}/api/submissions/${publicKey.toString()}`, {
+      const response = await fetch(`${API_URL}/submissions/${publicKey.toString()}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
