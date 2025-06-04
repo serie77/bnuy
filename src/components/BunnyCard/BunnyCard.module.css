@@ -13,24 +13,35 @@
 }
 
 .imageContainer {
-  position: relative;
-  width: 100%;
-  height: 100%;
-  overflow: hidden;
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transition: opacity 0.3s ease;
 }
 
 .image {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  transform: scale(1);
-  transition: all 0.5s cubic-bezier(0.2, 0, 0.2, 1);
   opacity: 0;
   transition: opacity 0.3s ease, transform 0.4s cubic-bezier(0.2, 0, 0.2, 1);
 }
 
-.image.loaded {
+.loaded {
   opacity: 1;
+}
+
+.hidden {
+  opacity: 0;
+}
+
+.skeletonCard {
+  position: absolute;
+  inset: 0;
+  background: var(--card-bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .card:hover .image {
@@ -155,14 +166,4 @@ body.light-mode .title {
 .placeholder {
   background-size: cover;
   background-position: center;
-}
-
-.hidden {
-  opacity: 0;
-  position: absolute;
-}
-
-.loaded {
-  opacity: 1;
-  transition: opacity 0.3s ease;
 }

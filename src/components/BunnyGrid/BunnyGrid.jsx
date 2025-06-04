@@ -48,7 +48,7 @@ function BunnyGrid() {
             rel="noopener noreferrer"
             className={styles.button}
           >
-            <span className={styles.icon}>𝕏</span>
+            <span className={styles.icon}>👥</span>
             join the X community
           </a>
         </div>

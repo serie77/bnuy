@@ -26,6 +26,12 @@ function Header() {
             𝕏
           </a>
           <Link 
+            to="/upload" 
+            className={`${styles.uploadButton} ${location.pathname === '/upload' ? styles.active : ''}`}
+          >
+            upload now
+          </Link>
+          <Link 
             to="/tv" 
             className={`${styles.navButton} ${location.pathname === '/tv' ? styles.active : ''}`}
           >

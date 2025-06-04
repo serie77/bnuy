@@ -217,3 +217,44 @@ body.light-mode .iconButton:hover {
 body.light-mode .iconButton:hover {
   background: rgba(0, 0, 0, 0.05);
 }
+
+.uploadButton {
+  color: #ffffff;
+  text-decoration: none;
+  font-weight: 600;
+  font-family: var(--font-mono);
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+  position: relative;
+  letter-spacing: 0.05em;
+  background: linear-gradient(135deg, #ff6b9d, #ff8c42);
+  border: 1px solid rgba(255, 107, 157, 0.3);
+  box-shadow: 0 2px 8px rgba(255, 107, 157, 0.2);
+}
+
+.uploadButton:hover {
+  background: linear-gradient(135deg, #ff8c42, #ff6b9d);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(255, 107, 157, 0.3);
+}
+
+.uploadButton.active {
+  background: linear-gradient(135deg, #ff6b9d, #ff8c42);
+  color: #ffffff;
+  font-weight: 600;
+}
+
+body.light-mode .uploadButton {
+  background: linear-gradient(135deg, #ff6b9d, #ff8c42);
+  color: #ffffff;
+}
+
+body.light-mode .uploadButton:hover {
+  background: linear-gradient(135deg, #ff8c42, #ff6b9d);
+}
+
+body.light-mode .uploadButton.active {
+  background: linear-gradient(135deg, #ff6b9d, #ff8c42);
+  color: #ffffff;
+}
