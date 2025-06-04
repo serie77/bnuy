@@ -29,9 +29,7 @@ function Vote() {
   const TOKEN_MINT = "7BFKwYhnNfMhCFjPGjd7tb1iX9NGkgoRDT1D8viDpump";
   const REQUIRED_TOKENS = 350000; // 20k tokens
 
-  const DISCORD_WEBHOOK = "https://discord.com/api/webhooks/1379888358226137149/bZtB84_Kti6SveUyESDV9d4nRGE7ZOdRQm7uBLBMOt0U-U3r4rfBseatpO2InUzqSHZQ";
-
-  const API_URL = ''; // Empty string for same-origin requests in production
+  const API_URL = '/api'; // This will make requests to /api/submissions/[wallet]
 
   // Page initialization
   useEffect(() => {
@@ -183,7 +181,7 @@ function Vote() {
     if (!publicKey) return;
     
     try {
-      const response = await fetch(`${API_URL}/api/submissions/${publicKey.toString()}`);
+      const response = await fetch(`${API_URL}/submissions/${publicKey.toString()}`);
       const data = await response.json();
       setSubmissionCount(data.count);
       
@@ -210,8 +208,7 @@ function Vote() {
 
   const saveSubmission = async (submissionData) => {
     try {
-      // Save to MongoDB
-      const response = await fetch(`${API_URL}/api/submissions`, {
+      const response = await fetch(`${API_URL}/api/submissions/${publicKey.toString()}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -225,27 +222,6 @@ function Vote() {
         return false;
       }
 
-      // If MongoDB save successful, send Discord notification
-      const formData = new FormData();
-      formData.append('files[0]', selectedFile, submissionData.fileName);
-      
-      const payload = {
-        content: `🐰 **NEW BUNNY SUBMISSION** 🐰\n\n` +
-                 `**Entry #${submissionCount + 1}/2**\n` +
-                 `**Wallet:** \`${submissionData.walletAddress}\`\n` +
-                 `**Tokens:** ${submissionData.tokenBalance.toLocaleString()}\n` +
-                 `**File:** ${submissionData.fileName} (${(submissionData.fileSize / 1024 / 1024).toFixed(2)}MB)\n` +
-                 `**Type:** ${submissionData.fileType}\n` +
-                 `**Time:** ${new Date().toLocaleString()}`
-      };
-      
-      formData.append('payload_json', JSON.stringify(payload));
-      
-      await fetch(DISCORD_WEBHOOK, {
-        method: 'POST',
-        body: formData
-      });
-      
       return true;
     } catch (error) {
       console.error('Failed to save submission:', error);

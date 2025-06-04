@@ -59,6 +59,25 @@ export default async function handler(req, res) {
         return res.status(400).json({ error: 'Maximum submissions reached' });
       }
 
+      // Send Discord notification
+      const formData = new FormData();
+      const payload = {
+        content: `🐰 **NEW BUNNY SUBMISSION** 🐰\n\n` +
+                 `**Entry #${count + 1}/2**\n` +
+                 `**Wallet:** \`${wallet}\`\n` +
+                 `**Tokens:** ${req.body.tokenBalance.toLocaleString()}\n` +
+                 `**File:** ${req.body.fileName} (${(req.body.fileSize / 1024 / 1024).toFixed(2)}MB)\n` +
+                 `**Type:** ${req.body.fileType}\n` +
+                 `**Time:** ${new Date().toLocaleString()}`
+      };
+      
+      formData.append('payload_json', JSON.stringify(payload));
+      
+      await fetch(process.env.DISCORD_WEBHOOK, {
+        method: 'POST',
+        body: formData
+      });
+
       const submission = new Submission(req.body);
       await submission.save();
       res.json(submission);
