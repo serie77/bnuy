@@ -181,7 +181,7 @@ function Vote() {
     if (!publicKey) return;
     
     try {
-      const response = await fetch(`${API_URL}/submissions/${publicKey.toString()}`);
+      const response = await fetch(`${API_URL}/api/submissions/${publicKey.toString()}`);
       const data = await response.json();
       setSubmissionCount(data.count);
       
