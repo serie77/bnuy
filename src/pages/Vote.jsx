@@ -29,7 +29,7 @@ function Vote() {
   const TOKEN_MINT = "7BFKwYhnNfMhCFjPGjd7tb1iX9NGkgoRDT1D8viDpump";
   const REQUIRED_TOKENS = 350000; // 20k tokens
 
-  const API_URL = '/api'; // This will be added to the path
+  const API_URL = 'https://bnuy.onrender.com/api';
 
   // Page initialization
   useEffect(() => {
