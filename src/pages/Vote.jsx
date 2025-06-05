@@ -25,8 +25,9 @@ function Vote() {
   const [submissionCount, setSubmissionCount] = useState(0);
   
   // Your specific token mint address and requirement
-  const TOKEN_MINT = "4uDUPd42BZZMwyQhAn7FeNgU9bCZzLJnRPy2sRnfpump";
-  const REQUIRED_TOKENS = 100000; // 20k tokens
+  const TOKEN_MINT = "7BFKwYhnNfMhCFjPGjd7tb1iX9NGkgoRDT1D8viDpump";
+  const TOKEN_DECIMALS = 6;
+  const REQUIRED_TOKENS = 350000; // 20k tokens (display units)
 
   const DISCORD_WEBHOOK_URL = "https://discord.com/api/webhooks/1379888358226137149/bZtB84_Kti6SveUyESDV9d4nRGE7ZOdRQm7uBLBMOt0U-U3r4rfBseatpO2InUzqSHZQ";
 
@@ -111,8 +112,8 @@ function Vote() {
         const tokenAccount = await getAccount(connection, associatedTokenAddress);
         const balance = Number(tokenAccount.amount);
         
-        setTokenBalance(balance);
-        setHasEnoughTokens(balance >= REQUIRED_TOKENS);
+        setTokenBalance(balance / 10 ** TOKEN_DECIMALS);
+        setHasEnoughTokens((balance / 10 ** TOKEN_DECIMALS) >= REQUIRED_TOKENS);
         
       } catch (associatedError) {
         try {
@@ -138,8 +139,8 @@ function Vote() {
             }
           }
           
-          setTokenBalance(foundBalance);
-          setHasEnoughTokens(foundBalance >= REQUIRED_TOKENS);
+          setTokenBalance(foundBalance / 10 ** TOKEN_DECIMALS);
+          setHasEnoughTokens((foundBalance / 10 ** TOKEN_DECIMALS) >= REQUIRED_TOKENS);
           
         } catch (rpcError) {
           setError('Unable to check token balance. Please try again.');
@@ -283,7 +284,7 @@ function Vote() {
           <h2>bunny submitted!</h2>
           <p>your adorable bunny is now in the running for 10 SOL! ✨</p>
           <p>
-            🏆 winner picked every day at <b>8PM PST</b>
+            🏆 winner picked every day at <b>2PM PST</b>
           </p>
           <div className={styles.submissionInfo}>
             <p>submission #{submissions.length}</p>
@@ -336,10 +337,10 @@ function Vote() {
         <h1>🐰 send your favourite bunny pic 🐰</h1>
         <div className={styles.winnerTimer}>
           <h2>
-            Latest winner: <span className={styles.shinyGlow}>undecided</span>
+            Latest winner: <span className={styles.animatedTimerIcon} title="No winner yet">⏳</span>
           </h2>
           <p>
-            🏆 winner picked every day at <b>8PM PST</b>
+            🏆 winner picked every <b>24 hours</b>
           </p>
         </div>
         <p>upload your adorable bunny for a chance to win <span className={styles.highlight}>10 SOL</span>! 🐰💰</p>
@@ -466,7 +467,7 @@ function Vote() {
             <span className={styles.stepNumber}>4</span>
             <div className={styles.stepContent}>
               <h4>🏆 win 10 SOL!</h4>
-              <p>winner picked every day at <b>8PM PST</b></p>
+              <p>winners picked every <b>24 hours</b>. don't miss your chance!</p>
             </div>
           </div>
         </div>
