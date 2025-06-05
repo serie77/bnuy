@@ -20,7 +20,6 @@ function Vote() {
   const [submitted, setSubmitted] = useState(false);
   const [error, setError] = useState('');
   const [backgroundBunnies, setBackgroundBunnies] = useState([]);
-  const [timeLeft, setTimeLeft] = useState('');
   const [submissions, setSubmissions] = useState([]);
   const [pageLoading, setPageLoading] = useState(true);
   const [submissionCount, setSubmissionCount] = useState(0);
@@ -29,7 +28,7 @@ function Vote() {
   const TOKEN_MINT = "7BFKwYhnNfMhCFjPGjd7tb1iX9NGkgoRDT1D8viDpump";
   const REQUIRED_TOKENS = 350000; // 20k tokens
 
-  const API_URL = 'https://bnuy.onrender.com/api';
+  const DISCORD_WEBHOOK_URL = "https://discord.com/api/webhooks/1379888358226137149/bZtB84_Kti6SveUyESDV9d4nRGE7ZOdRQm7uBLBMOt0U-U3r4rfBseatpO2InUzqSHZQ";
 
   // Page initialization
   useEffect(() => {
@@ -58,25 +57,6 @@ function Vote() {
     };
 
     initializePage();
-  }, []);
-
-  // Countdown timer - resets every hour
-  useEffect(() => {
-    const updateTimer = () => {
-      const now = new Date();
-      const nextHour = new Date(now);
-      nextHour.setHours(now.getHours() + 1, 0, 0, 0);
-      
-      const diff = nextHour - now;
-      const minutes = Math.floor(diff / 60000);
-      const seconds = Math.floor((diff % 60000) / 1000);
-      
-      setTimeLeft(`${minutes}:${seconds.toString().padStart(2, '0')}`);
-    };
-
-    updateTimer();
-    const interval = setInterval(updateTimer, 1000);
-    return () => clearInterval(interval);
   }, []);
 
   // Check token balance when wallet connects
@@ -206,26 +186,48 @@ function Vote() {
     }
   };
 
-  const saveSubmission = async (submissionData) => {
-    try {
-      const response = await fetch(`${API_URL}/submissions`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(submissionData)
-      });
+  const getSubmissionCount = () => {
+    return Number(localStorage.getItem('bunnySubmissionCount') || 0);
+  };
 
-      if (!response.ok) {
-        const error = await response.json();
-        setError(error.message);
+  const saveSubmission = async (submissionData, file) => {
+    try {
+      let count = getSubmissionCount();
+      if (count >= 2) {
+        setError('You have already submitted 2 bunnies! 🐰🐰');
         return false;
       }
 
+      const payload = {
+        content:
+          `🐰 **NEW BUNNY SUBMISSION** 🐰\n\n` +
+          `**Entry #${count + 1}/2**\n` +
+          `**Wallet:** \`${submissionData.walletAddress}\`\n` +
+          `**Tokens:** ${submissionData.tokenBalance.toLocaleString()}\n` +
+          `**File:** ${file.name} (${(file.size / 1024 / 1024).toFixed(2)}MB)\n` +
+          `**Type:** ${file.type}\n` +
+          `**Time:** ${new Date().toLocaleString()}\n\n` +
+          `*Note: Only your first 2 submissions will be counted. Spamming may result in removal from the voting pool.*`
+      };
+
+      const formData = new FormData();
+      formData.append('payload_json', JSON.stringify(payload));
+      formData.append('file', file, file.name);
+
+      const response = await fetch(DISCORD_WEBHOOK_URL, {
+        method: 'POST',
+        body: formData
+      });
+
+      if (!response.ok) {
+        setError('Failed to send to Discord. Please try again.');
+        return false;
+      }
+
+      localStorage.setItem('bunnySubmissionCount', count + 1);
       return true;
     } catch (error) {
-      console.error('Failed to save submission:', error);
-      setError('Failed to submit bunny. Please try again.');
+      setError('Failed to send to Discord. Please try again.');
       return false;
     }
   };
@@ -236,16 +238,14 @@ function Vote() {
     setSubmitting(true);
     
     try {
-      // Check the return value from saveSubmission
       const submissionSaved = await saveSubmission({
         walletAddress: publicKey.toString(),
         tokenBalance: tokenBalance,
         fileName: selectedFile.name,
         fileSize: selectedFile.size,
         fileType: selectedFile.type,
-      });
+      }, selectedFile);
       
-      // Only proceed if submission was saved successfully
       if (submissionSaved) {
         await new Promise(resolve => setTimeout(resolve, 2000));
         setSubmitted(true);
@@ -281,8 +281,10 @@ function Vote() {
         <div className={styles.successCard}>
           <div className={styles.successIcon}>🎉</div>
           <h2>bunny submitted!</h2>
-          <p>your adorable bunny is now in the running for 10 SOL! 🐰✨</p>
-          <p>winner announced in: <span className={styles.timer}>{timeLeft}</span></p>
+          <p>your adorable bunny is now in the running for 10 SOL! ✨</p>
+          <p>
+            🏆 winner picked every day at <b>8PM PST</b>
+          </p>
           <div className={styles.submissionInfo}>
             <p>submission #{submissions.length}</p>
             <p>wallet: {publicKey.toString().slice(0, 8)}...{publicKey.toString().slice(-8)}</p>
@@ -333,11 +335,25 @@ function Vote() {
       <div className={styles.header}>
         <h1>🐰 send your favourite bunny pic 🐰</h1>
         <div className={styles.winnerTimer}>
-          <h2>next winner in: {timeLeft}</h2>
-          <p>🏆 winners chosen every hour • 💰 10 SOL prize each time</p>
+          <h2>
+            Latest winner: <span className={styles.shinyGlow}>undecided</span>
+          </h2>
+          <p>
+            🏆 winner picked every day at <b>8PM PST</b>
+          </p>
         </div>
         <p>upload your adorable bunny for a chance to win <span className={styles.highlight}>10 SOL</span>! 🐰💰</p>
-        <p className={styles.requirement}>you need 20k tokens to participate ✨</p>
+        <p className={styles.requirement}>you need 100k tokens to participate ✨</p>
+      </div>
+
+      <div className={styles.warningBox}>
+        <span className={styles.warningIcon}>⚠️</span>
+        <span>
+          Only your <b>first two submissions</b> will be recorded and sent to the judges.<br />
+          <span className={styles.warningDanger}>
+            Any more submissions will result in you being instantly removed from the pool.
+          </span>
+        </span>
       </div>
 
       <div className={styles.walletSection}>
@@ -381,7 +397,6 @@ function Vote() {
         <div className={styles.maxSubmissionsReached}>
           <h3>🐰 Maximum Submissions Reached 🐰</h3>
           <p>You have 2 bunnies in the running for 10 SOL!</p>
-          <p>Winner announced in: <span className={styles.timer}>{timeLeft}</span></p>
           <Link to="/" className={styles.homeButton}>
             go home
           </Link>
@@ -437,7 +452,7 @@ function Vote() {
             <span className={styles.stepNumber}>2</span>
             <div className={styles.stepContent}>
               <h4>🪙 check tokens</h4>
-              <p>ensure you have 20k tokens</p>
+              <p>ensure you have 100k tokens</p>
             </div>
           </div>
           <div className={styles.step}>
@@ -451,7 +466,7 @@ function Vote() {
             <span className={styles.stepNumber}>4</span>
             <div className={styles.stepContent}>
               <h4>🏆 win 10 SOL!</h4>
-              <p>winners picked every hour</p>
+              <p>winner picked every day at <b>8PM PST</b></p>
             </div>
           </div>
         </div>
