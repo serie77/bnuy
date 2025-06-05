@@ -1,4 +1,4 @@
-import mongoose from 'mongoose';
+const mongoose = require('mongoose');
 
 // Connect to MongoDB (connection is cached between serverless function calls)
 let cached = global.mongoose;
@@ -29,7 +29,7 @@ const submissionSchema = new mongoose.Schema({
 
 const Submission = mongoose.models.Submission || mongoose.model('Submission', submissionSchema);
 
-export default async function handler(req, res) {
+async function handler(req, res) {
   await dbConnect();
   
   // Enable CORS
@@ -88,3 +88,5 @@ export default async function handler(req, res) {
     res.status(200).end();
   }
 }
+
+module.exports = handler;
