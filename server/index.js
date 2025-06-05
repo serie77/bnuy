@@ -15,10 +15,11 @@ const app = express();
 // More detailed CORS configuration
 app.use(cors({
   origin: [
-    'https://bnuy.fun', // your production frontend
-    'https://bnuy.onrender.com', // your Render backend URL (optional, for testing)
-    'http://localhost:5173', // local dev
-    'http://localhost:3000'  // local dev
+    'https://bnuy.fun',
+    'https://www.bnuy.fun',
+    'https://bnuy.onrender.com',
+    'http://localhost:5173',
+    'http://localhost:3000'
   ],
   methods: ['GET', 'POST'],
   credentials: true
