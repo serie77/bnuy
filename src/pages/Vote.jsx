@@ -208,7 +208,7 @@ function Vote() {
 
   const saveSubmission = async (submissionData) => {
     try {
-      const response = await fetch(`${API_URL}/submissions/${publicKey.toString()}`, {
+      const response = await fetch(`${API_URL}/submissions`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
