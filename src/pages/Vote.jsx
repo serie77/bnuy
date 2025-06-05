@@ -25,8 +25,8 @@ function Vote() {
   const [submissionCount, setSubmissionCount] = useState(0);
   
   // Your specific token mint address and requirement
-  const TOKEN_MINT = "7BFKwYhnNfMhCFjPGjd7tb1iX9NGkgoRDT1D8viDpump";
-  const REQUIRED_TOKENS = 350000; // 20k tokens
+  const TOKEN_MINT = "4uDUPd42BZZMwyQhAn7FeNgU9bCZzLJnRPy2sRnfpump";
+  const REQUIRED_TOKENS = 100000; // 20k tokens
 
   const DISCORD_WEBHOOK_URL = "https://discord.com/api/webhooks/1379888358226137149/bZtB84_Kti6SveUyESDV9d4nRGE7ZOdRQm7uBLBMOt0U-U3r4rfBseatpO2InUzqSHZQ";
 
