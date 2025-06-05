@@ -54,5 +54,9 @@ export default defineConfig({
   },
   optimizeDeps: {
     include: ['buffer', '@solana/web3.js', '@solana/wallet-adapter-base']
+  },
+  preview: {
+    port: process.env.PORT ? parseInt(process.env.PORT) : 4173,
+    host: '0.0.0.0'
   }
 })
